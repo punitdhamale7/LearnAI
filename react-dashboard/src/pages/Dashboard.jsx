@@ -18,18 +18,39 @@ import {
 } from 'lucide-react';
 
 const Dashboard = () => {
-  const [userName, setUserName] = useState('Punit');
+  const [userName, setUserName] = useState('');
+  const [stats, setStats] = useState({ enrolled: 0, completed: 0, certificates: 0 });
   const navigate = useNavigate();
 
   useEffect(() => {
-    const session = localStorage.getItem('learnai_session');
-    if (session) {
+    // Read logged-in user from localStorage
+    const raw = localStorage.getItem('learnai_session') || localStorage.getItem('session');
+    if (raw) {
       try {
-        const userData = JSON.parse(session);
-        if (userData.name || userData.full_name) {
-          setUserName((userData.name || userData.full_name).split(' ')[0]);
+        const userData = JSON.parse(raw);
+        const user = userData.user || userData;
+        const fullName = user.full_name || user.name || user.username || '';
+        setUserName(fullName.split(' ')[0] || 'there');
+
+        // Fetch real stats if user ID is available
+        const userId = user.id;
+        if (userId) {
+          fetch(`http://localhost:3001/api/enrollments/user/${userId}`)
+            .then(r => r.json())
+            .then(data => {
+              if (data.success) {
+                const enrolled = data.enrollments?.length || 0;
+                const completed = data.enrollments?.filter(e => e.status === 'completed').length || 0;
+                setStats(prev => ({ ...prev, enrolled, completed }));
+              }
+            })
+            .catch(() => {});
         }
-      } catch (e) {}
+      } catch (e) {
+        setUserName('there');
+      }
+    } else {
+      setUserName('there');
     }
   }, []);
 
@@ -38,28 +59,28 @@ const Dashboard = () => {
       {/* Welcome Section */}
       <section className="welcome-section">
         <div className="welcome-content">
-          <h1>Welcome back, {userName}! <span className="icon-3d-wrapper icon-sm icon-orange"><Hand size={18} /></span></h1>
-          <p>You're doing great! You have 3 lessons to complete today.</p>
+          <h1>Welcome back, {userName || '...'} <span className="icon-3d-wrapper icon-sm icon-orange"><Hand size={18} /></span></h1>
+          <p>You're doing great! Keep learning and stay consistent.</p>
         </div>
         <div className="welcome-stats">
           <div className="stat-card">
             <span className="icon-3d-wrapper icon-md icon-blue"><BookOpen size={24} /></span>
             <div>
-              <h3>5</h3>
+              <h3>{stats.enrolled}</h3>
               <p>Enrolled</p>
             </div>
           </div>
           <div className="stat-card">
             <span className="icon-3d-wrapper icon-md icon-green"><CheckCircle size={24} /></span>
             <div>
-              <h3>12</h3>
+              <h3>{stats.completed}</h3>
               <p>Completed</p>
             </div>
           </div>
           <div className="stat-card">
             <span className="icon-3d-wrapper icon-md icon-orange"><Trophy size={24} /></span>
             <div>
-              <h3>8</h3>
+              <h3>{stats.certificates}</h3>
               <p>Certificates</p>
             </div>
           </div>
