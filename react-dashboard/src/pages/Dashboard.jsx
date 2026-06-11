@@ -73,7 +73,10 @@ const Dashboard = () => {
         const completed   = enrollments.filter(e =>
           e.status === 'completed' || Number(e.progress_percentage) >= 100
         ).length;
-        const certificates = certData.success ? (certData.certificates?.length || 0) : completed;
+        // API returns { success: true, count: N } — not an array
+        const certificates = certData.success
+          ? (certData.count ?? certData.certificates?.length ?? completed)
+          : completed;
 
         setStats({ enrolled, completed, certificates });
 

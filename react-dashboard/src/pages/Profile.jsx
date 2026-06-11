@@ -158,7 +158,9 @@ export default function Profile() {
         }));
       }
       if (cr.status === "fulfilled" && cr.value?.success) {
-        setStats(prev => ({ ...prev, certificates: (cr.value.certificates || []).length }));
+        // API returns { success: true, count: N } — not an array
+        const certCount = cr.value.count ?? (cr.value.certificates?.length ?? 0);
+        setStats(prev => ({ ...prev, certificates: certCount }));
       }
     } catch(e) {
       console.error("Profile load error:", e);
