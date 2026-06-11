@@ -609,7 +609,8 @@ body {
 
 .team-container {
     position: relative;
-    height: 500px;
+    height: auto;
+    min-height: 460px;
     overflow: hidden;
 }
 
