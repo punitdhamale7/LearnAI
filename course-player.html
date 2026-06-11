@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Player - LearnAI</title>
+    <link rel="stylesheet" href="styles/dashboard.css">
+    <link rel="stylesheet" href="styles/course-player.css">
+    <!-- Video.js -->
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+    <script src="scripts/config.js"></script>
+    <script src="scripts/api.js"></script></head>
+<body>
+    <div class="player-container">
+        <!-- Sidebar with Curriculum -->
+        <aside class="curriculum-sidebar" id="curriculumSidebar">
+            <div class="sidebar-header">
+                <button class="back-btn" onclick="goBack()">← Back</button>
+                <h3 id="courseTitle">Course Title</h3>
+            </div>
+            
+            <div class="course-progress-summary">
+                <div class="progress-circle">
+                    <span id="progressPercentage">0%</span>
+                </div>
+                <div class="progress-info">
+                    <p><span id="completedLessons">0</span> of <span id="totalLessons">0</span> lessons</p>
+                </div>
+            </div>
+            
+            <div class="curriculum-content" id="curriculumContent">
+                <!-- Sections and lessons will be loaded here -->
+            </div>
+        </aside>
+
+        <!-- Main Player Area -->
+        <main class="player-main">
+            <!-- Video/Content Player -->
+            <div class="player-area">
+                <div class="video-container" id="videoContainer">
+                    <!-- Video.js Player -->
+                    <video id="videoPlayer" 
+                           class="video-js vjs-big-play-centered" 
+                           controls 
+                           preload="auto" 
+                           width="100%" 
+                           height="100%"
+                           data-setup='{"fluid": true, "aspectRatio": "16:9"}'>
+                        <source id="videoSource" src="" type="video/mp4">
+                        <p class="vjs-no-js">
+                            To view this video please enable JavaScript, and consider upgrading to a web browser that
+                            <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                        </p>
+                    </video>
+                    
+                    <!-- YouTube/External Video Fallback -->
+                    <iframe id="externalVideoPlayer" 
+                            width="100%" 
+                            height="100%" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen
+                            style="display: none;">
+                    </iframe>
+                </div>
+                
+                <div class="article-container" id="articleContainer" style="display: none;">
+                    <div class="article-content" id="articleContent">
+                        <!-- Article content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lesson Info -->
+            <div class="lesson-info">
+                <div class="lesson-header">
+                    <div>
+                        <h2 id="lessonTitle">Lesson Title</h2>
+                        <p class="lesson-meta">
+                            <span id="lessonDuration">0 min</span> • 
+                            <span id="lessonType" class="lesson-type-badge badge-video">Video</span>
+                        </p>
+                    </div>
+                    <button class="complete-btn" id="completeBtn" onclick="markAsComplete()">
+                        ✓ Mark as Complete
+                    </button>
+                </div>
+                
+                <div class="lesson-description">
+                    <h3>About this lesson</h3>
+                    <p id="lessonDescription">Lesson description will appear here</p>
+                </div>
+                
+                <!-- Tabs -->
+                <div class="lesson-tabs">
+                    <button class="tab-btn active" onclick="showTab('overview', this)">Overview</button>
+                    <button class="tab-btn" onclick="showTab('notes', this)">Notes</button>
+                    <button class="tab-btn" onclick="showTab('quiz', this)" id="quizTabBtn" style="display: none;">Quiz</button>
+                    <button class="tab-btn" onclick="showTab('reviews', this)">Reviews</button>
+                </div>
+                
+                <div class="tab-content">
+                    <div id="overviewTab" class="tab-pane active">
+                        <h3>What you'll learn</h3>
+                        <p id="lessonOverview">Detailed lesson overview...</p>
+                    </div>
+                    
+                    <div id="notesTab" class="tab-pane" style="display: none;">
+                        <h3>Your Notes</h3>
+                        <p style="font-size:13px;color:#94a3b8;margin-bottom:12px;">Notes are saved locally per lesson. Use them to capture key ideas.</p>
+                        <div class="notes-toolbar">
+                            <button onclick="insertNoteTemplate('heading')">+ Heading</button>
+                            <button onclick="insertNoteTemplate('bullet')">+ Bullet</button>
+                            <button onclick="insertNoteTemplate('code')">+ Code</button>
+                            <button onclick="clearNotes()">🗑 Clear</button>
+                        </div>
+                        <textarea id="lessonNotes" placeholder="📝 Start taking notes here...&#10;&#10;Tip: Use headings, bullet points, and code snippets to organize your notes." rows="10"></textarea>
+                        <div class="notes-actions">
+                            <button onclick="saveNotes()" class="btn-primary">💾 Save Notes</button>
+                            <span class="notes-saved-indicator" id="notesSavedMsg">✓ Saved!</span>
+                        </div>
+                    </div>
+                    
+                    <div id="quizTab" class="tab-pane" style="display: none;">
+                        <div id="quizContainer">
+                            <!-- Quiz will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div id="reviewsTab" class="tab-pane" style="display: none;">
+                        <div class="reviews-section">
+                            <div class="reviews-header">
+                                <h3>Course Reviews</h3>
+                                <div class="course-rating-summary" id="ratingSummary">
+                                    <div class="rating-average">
+                                        <span class="rating-number" id="avgRating">0.0</span>
+                                        <div class="rating-stars" id="avgStars">☆☆☆☆☆</div>
+                                        <span class="rating-count" id="reviewCount">0 reviews</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Add Review Form -->
+                            <div class="add-review-section" id="addReviewSection">
+                                <h4>Write a Review</h4>
+                                <div class="rating-input">
+                                    <label>Your Rating:</label>
+                                    <div class="star-rating" id="starRating">
+                                        <span class="star" data-rating="1">☆</span>
+                                        <span class="star" data-rating="2">☆</span>
+                                        <span class="star" data-rating="3">☆</span>
+                                        <span class="star" data-rating="4">☆</span>
+                                        <span class="star" data-rating="5">☆</span>
+                                    </div>
+                                </div>
+                                <textarea id="reviewText" placeholder="Share your experience with this course..." rows="4"></textarea>
+                                <button onclick="submitReview()" class="btn-primary" id="submitReviewBtn">Submit Review</button>
+                            </div>
+                            
+                            <!-- Reviews List -->
+                            <div class="reviews-list" id="reviewsList">
+                                <!-- Reviews will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="lesson-navigation">
+                <button class="nav-btn" id="prevBtn" onclick="previousLesson()" disabled>
+                    ← Previous Lesson
+                </button>
+                <button class="nav-btn primary" id="nextBtn" onclick="nextLesson()">
+                    Next Lesson →
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script src="scripts/course-player.js"></script>
+    <script>
+        // Mobile sidebar toggle
+        function toggleCurriculumSidebar() {
+            const sidebar = document.getElementById('curriculumSidebar');
+            sidebar.classList.toggle('open');
+            // Overlay
+            let overlay = document.getElementById('sidebarOverlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'sidebarOverlay';
+                overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1099;display:none;backdrop-filter:blur(2px);';
+                overlay.onclick = () => { sidebar.classList.remove('open'); overlay.style.display='none'; updateToggleBtn(false); };
+                document.body.appendChild(overlay);
+            }
+            const isOpen = sidebar.classList.contains('open');
+            overlay.style.display = isOpen ? 'block' : 'none';
+            updateToggleBtn(isOpen);
+        }
+        function updateToggleBtn(isOpen) {
+            const btn = document.getElementById('sidebarToggleBtn');
+            if (btn) btn.innerHTML = isOpen ? '✕ Close' : '☰ Lessons';
+        }
+        // Inject toggle button on mobile
+        function injectMobileToggle() {
+            if (window.innerWidth <= 900 && !document.getElementById('sidebarToggleBtn')) {
+                const btn = document.createElement('button');
+                btn.id = 'sidebarToggleBtn';
+                btn.innerHTML = '☰ Lessons';
+                btn.onclick = toggleCurriculumSidebar;
+                btn.style.cssText = 'position:fixed;top:12px;left:12px;z-index:1050;background:#1F2937;color:#fff;border:none;padding:8px 14px;cursor:pointer;font-size:13px;font-weight:600;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;gap:6px;';
+                document.body.appendChild(btn);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', injectMobileToggle);
+        window.addEventListener('resize', injectMobileToggle);
+    </script>
+    <script>
+        // When user presses browser back button, go to SPA instead of old HTML page
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            const from = params.get('from');
+            if (from === 'dashboard') {
+                // Push a dummy entry so back button goes to SPA
+                history.replaceState(null, '', window.location.href);
+                window.addEventListener('popstate', function() {
+                    window.location.href = 'dashboard.html#/my-courses';
+                });
+            }
+        })();
+    </script>
+    
+    <!-- AI Chatbot Widget -->
+    <link rel="stylesheet" href="styles/chatbot.css">
+    <script src="scripts/chatbot.js"></script>
+</body>
+</html>
+

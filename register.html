@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - LearnAI</title>
+    <link rel="stylesheet" href="styles/auth.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles/icons.css">
+    <script src="scripts/config.js"></script>
+    <script src="scripts/api.js"></script>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Left Side - Image/Visual -->
+        <div class="auth-visual">
+            <div class="visual-content">
+                <h1>Start Your Learning Journey</h1>
+                <p>Join thousands of students already learning with AI-powered personalization</p>
+                <div class="visual-features">
+                    <div class="visual-feature">
+                        <span class="feature-icon"><span class="icon-3d-wrapper icon-xs icon-white"><i data-lucide="milestone"></i></span></span>
+                        <p>Personalized learning paths</p>
+                    </div>
+                    <div class="visual-feature">
+                        <span class="feature-icon"><span class="icon-3d-wrapper icon-xs icon-white"><i data-lucide="graduation-cap"></i></span></span>
+                        <p>Expert instructors</p>
+                    </div>
+                    <div class="visual-feature">
+                        <span class="feature-icon"><span class="icon-3d-wrapper icon-xs icon-white"><i data-lucide="bar-chart-3"></i></span></span>
+                        <p>Track your progress</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Register Form -->
+        <div class="auth-form-container">
+            <div class="auth-form-wrapper">
+                <div class="auth-header">
+                    <a href="index.html" class="back-link">← Back to Home</a>
+                    <h2>Create Account</h2>
+                    <p>Sign up to get started with LearnAI</p>
+                </div>
+
+                <form id="registerForm" class="auth-form" onsubmit="handleRegister(event)">
+                    <!-- Full Name -->
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input 
+                            type="text" 
+                            id="fullName" 
+                            name="fullName" 
+                            placeholder="Enter your full name"
+                            required
+                            minlength="3"
+                        >
+                        <span class="error-message" id="fullNameError"></span>
+                    </div>
+
+                    <!-- Username -->
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            placeholder="Choose a username"
+                            required
+                            minlength="4"
+                            pattern="[a-zA-Z0-9_]+"
+                        >
+                        <span class="error-message" id="usernameError"></span>
+                        <span class="helper-text">Only letters, numbers, and underscores</span>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="Enter your email"
+                            required
+                        >
+                        <span class="error-message" id="emailError"></span>
+                    </div>
+
+                    <!-- Phone Number (Optional) -->
+                    <div class="form-group">
+                        <label for="phone">Phone Number <span class="optional">(Optional)</span></label>
+                        <input 
+                            type="tel" 
+                            id="phone" 
+                            name="phone" 
+                            placeholder="+1 234 567 8900"
+                            pattern="[+]?[0-9\s-]+"
+                        >
+                        <span class="error-message" id="phoneError"></span>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="Create a strong password"
+                                required
+                                minlength="8"
+                            >
+                            <button type="button" class="toggle-password" onclick="togglePassword('password')">
+                                <i data-lucide="eye"></i>
+                            </button>
+                        </div>
+                        <span class="error-message" id="passwordError"></span>
+                        
+                        <!-- Password Strength Indicator -->
+                        <div class="password-strength">
+                            <div class="strength-bar">
+                                <div class="strength-fill" id="strengthFill"></div>
+                            </div>
+                            <span class="strength-text" id="strengthText">Password strength</span>
+                        </div>
+                        
+                        <div class="password-requirements">
+                            <p class="requirement" id="req-length">
+                                <span class="req-icon">○</span> At least 8 characters
+                            </p>
+                            <p class="requirement" id="req-uppercase">
+                                <span class="req-icon">○</span> One uppercase letter
+                            </p>
+                            <p class="requirement" id="req-lowercase">
+                                <span class="req-icon">○</span> One lowercase letter
+                            </p>
+                            <p class="requirement" id="req-number">
+                                <span class="req-icon">○</span> One number
+                            </p>
+                            <p class="requirement" id="req-special">
+                                <span class="req-icon">○</span> One special character
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="confirmPassword" 
+                                name="confirmPassword" 
+                                placeholder="Re-enter your password"
+                                required
+                            >
+                            <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword')">
+                                <i data-lucide="eye"></i>
+                            </button>
+                        </div>
+                        <span class="error-message" id="confirmPasswordError"></span>
+                    </div>
+
+                    <!-- Terms and Conditions -->
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-text">
+                                I agree to the <a href="terms.html" target="_blank">Terms & Conditions</a> 
+                                and <a href="privacy.html" target="_blank">Privacy Policy</a>
+                            </span>
+                        </label>
+                        <span class="error-message" id="termsError"></span>
+                    </div>
+
+                    <!-- Newsletter Subscription -->
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="newsletter" name="newsletter">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-text">
+                                Send me learning tips and updates
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="submit-btn">
+                        Create Account
+                    </button>
+
+                    <!-- Divider -->
+                    <div class="divider">
+                        <span>or continue with</span>
+                    </div>
+
+                    <!-- Social Login -->
+                    <div class="social-login">
+                        <button type="button" class="social-btn google" onclick="socialLogin('google')">
+                            <img src="assets/google-icon.svg" alt="Google">
+                            Google
+                        </button>
+                        <button type="button" class="social-btn github" onclick="socialLogin('github')">
+                            <img src="assets/github-icon.svg" alt="GitHub">
+                            GitHub
+                        </button>
+                    </div>
+
+                    <!-- Admin Button -->
+                    <a href="admin-login.html" class="admin-btn">
+                        🛡️ Login as Admin
+                    </a>
+
+                    <!-- Login Link -->
+                    <div class="auth-footer">
+                        <p>Already have an account? <a href="login.html">Sign In</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

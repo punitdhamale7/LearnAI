@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - LearnAI</title>
+    <link rel="stylesheet" href="styles/auth.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles/icons.css">
+    <script src="scripts/config.js"></script><script src="scripts/api.js"></script></head>
+<body>
+    <div class="auth-container">
+        <!-- Left Side -->
+        <div class="auth-visual">
+            <div class="visual-content">
+                <h1>Admin Panel</h1>
+                <p>Manage courses, users, and platform content</p>
+                <div class="visual-features">
+                    <div class="visual-feature">
+                        <span class="feature-icon"><span class="icon-3d-wrapper icon-xs icon-white"><i data-lucide="layout-dashboard"></i></span></span>
+                        <p>Full platform control</p>
+                    </div>
+                    <div class="visual-feature">
+                        <span class="feature-icon"><span class="icon-3d-wrapper icon-xs icon-white"><i data-lucide="book-open"></i></span></span>
+                        <p>Create & manage courses</p>
+                    </div>
+                    <div class="visual-feature">
+                        <span class="feature-icon"><span class="icon-3d-wrapper icon-xs icon-white"><i data-lucide="shield-check"></i></span></span>
+                        <p>Secure admin access</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Admin Login Form -->
+        <div class="auth-form-container">
+            <div class="auth-form-wrapper">
+                <div class="auth-header">
+                    <a href="login.html" class="back-link">← Back to Login</a>
+                    <h2>Admin Sign In</h2>
+                    <p>Secure access to platform management</p>
+                </div>
+
+                <div id="errorMessage" class="error-banner" style="display:none;"></div>
+
+                <form id="adminLoginForm" class="auth-form" onsubmit="handleAdminLogin(event)">
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="adminEmail">Admin Email</label>
+                        <input
+                            type="email"
+                            id="adminEmail"
+                            placeholder="admin@learnai.com"
+                            required
+                        >
+                    </div>
+
+                    <!-- Password -->
+                    <div class="form-group">
+                        <label for="adminPassword">Password</label>
+                        <div class="password-input-wrapper">
+                            <input
+                                type="password"
+                                id="adminPassword"
+                                placeholder="Enter admin password"
+                                required
+                            >
+                            <button type="button" class="toggle-password" onclick="togglePassword('adminPassword')">
+                                <i data-lucide="eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" class="submit-btn" id="loginBtn">
+                        Login to Admin Panel
+                    </button>
+
+                    <!-- Back to student login -->
+                    <div class="auth-footer">
+                        <p>Not an admin? <a href="login.html">Student Login</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) lucide.createIcons();
+        });
+
+        function togglePassword(id) {
+            const input = document.getElementById(id);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        async function handleAdminLogin(e) {
+            e.preventDefault();
+            const email    = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+            const errorDiv = document.getElementById('errorMessage');
+            const btn      = document.getElementById('loginBtn');
+
+            errorDiv.style.display = 'none';
+            btn.disabled    = true;
+            btn.textContent = 'Logging in…';
+
+            try {
+                const res  = await fetch('http://localhost:3001/api/auth/admin-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    localStorage.setItem('adminSession', JSON.stringify({
+                        loggedIn: true,
+                        admin: { id: data.admin.id, email: data.admin.email, name: data.admin.name },
+                        timestamp: new Date().getTime()
+                    }));
+                    window.location.replace('admin.html');
+                } else {
+                    errorDiv.textContent    = data.message || 'Invalid credentials';
+                    errorDiv.style.display  = 'block';
+                    btn.disabled    = false;
+                    btn.textContent = 'Login to Admin Panel';
+                }
+            } catch (err) {
+                errorDiv.textContent   = 'Connection error. Is the server running?';
+                errorDiv.style.display = 'block';
+                btn.disabled    = false;
+                btn.textContent = 'Login to Admin Panel';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+﻿/* Premium 3D Icon System */
+:root {
+    --icon-primary: #6B7280;
+    --icon-secondary: #9CA3AF;
+    --icon-success: #22c55e;
+    --icon-warning: #f59e0b;
+    --icon-danger: #ef4444;
+    --icon-info: #6B7280;
+}
+
+.icon-3d-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 0;
+    box-shadow: 
+        0 8px 16px rgba(0, 0, 0, 0.08),
+        inset 0 0 20px rgba(255, 255, 255, 0.4);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.icon-3d-wrapper:hover {
+    transform: translateY(-6px) scale(1.05) rotateX(10deg);
+    box-shadow: 
+        0 15px 30px rgba(0, 0, 0, 0.15),
+        inset 0 0 25px rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.icon-3d-wrapper svg {
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+    stroke-width: 2.25px;
+    transition: transform 0.4s ease;
+}
+
+.icon-3d-wrapper:hover svg {
+    transform: scale(1.1);
+}
+
+/* Size Variants */
+.icon-xxs { padding: 4px; border-radius: 0; }
+.icon-xxs svg { width: 12px; height: 12px; }
+
+.icon-xs { padding: 5px; border-radius: 0; }
+.icon-xs svg { width: 14px; height: 14px; }
+
+.icon-sm { padding: 6px; border-radius: 0; }
+.icon-sm svg { width: 16px; height: 16px; }
+
+.icon-md { padding: 10px; border-radius: 0; }
+.icon-md svg { width: 24px; height: 24px; }
+
+.icon-lg { padding: 16px; border-radius: 0; }
+.icon-lg svg { width: 32px; height: 32px; }
+
+.icon-xl { padding: 24px; border-radius: 0; }
+.icon-xl svg { width: 48px; height: 48px; }
+
+/* Color Variants */
+.icon-purple { background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(168, 85, 247, 0.05)); border-color: rgba(168, 85, 247, 0.3); color: #9CA3AF; }
+.icon-blue { background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.05)); border-color: rgba(59, 130, 246, 0.3); color: #6B7280; }
+.icon-indigo { background: linear-gradient(135deg, rgba(107, 114, 128, 0.15), rgba(107, 114, 128, 0.05)); border-color: rgba(107, 114, 128, 0.3); color: #6B7280; }
+.icon-green { background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05)); border-color: rgba(34, 197, 94, 0.3); color: #22c55e; }
+.icon-orange { background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05)); border-color: rgba(245, 158, 11, 0.3); color: #f59e0b; }
+.icon-red { background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05)); border-color: rgba(239, 68, 68, 0.3); color: #ef4444; }
+.icon-yellow { background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(234, 179, 8, 0.05)); border-color: rgba(234, 179, 8, 0.3); color: #eab308; }
+.icon-brown { background: linear-gradient(135deg, rgba(180, 83, 9, 0.15), rgba(180, 83, 9, 0.05)); border-color: rgba(180, 83, 9, 0.3); color: #b45309; }
+
+/* Spin Animation */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Dark Mode Overrides */
+[data-theme="dark"] .icon-3d-wrapper {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Glass Inner Effect */
+.icon-3d-wrapper::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.icon-3d-wrapper:hover::after {
+    opacity: 1;
+}

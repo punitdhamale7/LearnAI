@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Driven Adaptive Learning Platform</title>
+    <link rel="stylesheet" href="styles/main.css">    <link rel="stylesheet" href="styles/icons.css">
+    <link href="https://fonts.googleapis.bcom/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="scripts/config.js"></script><script src="scripts/api.js"></script>
+    <style>
+        #site-loader {
+            position: fixed;
+            inset: 0;
+            background: #0f0c29;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        #site-loader.hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .loader-logo {
+            font-size: 36px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.7s ease 0.2s forwards;
+        }
+        .loader-logo span {
+            background: linear-gradient(90deg, #a78bfa, #6366f1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .loader-tagline {
+            font-size: 13px;
+            color: #9ca3af;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 48px;
+            opacity: 0;
+            animation: fadeUp 0.7s ease 0.4s forwards;
+        }
+        .loader-bar-wrap {
+            width: 200px;
+            height: 3px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 99px;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeUp 0.5s ease 0.6s forwards;
+        }
+        .loader-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #6366f1, #a78bfa);
+            border-radius: 99px;
+            animation: loadBar 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.8s forwards;
+        }
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes loadBar {
+            0%   { width: 0%; }
+            60%  { width: 75%; }
+            100% { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Loader -->
+    <div id="site-loader">
+        <div class="loader-logo">Learn<span>AI</span></div>
+        <div class="loader-tagline">Learn Smarter, Not Harder</div>
+        <div class="loader-bar-wrap">
+            <div class="loader-bar"></div>
+        </div>
+    </div>
+    <script>
+        (function() {
+            const loader = document.getElementById('site-loader');
+
+            // Skip animation entirely if user is already logged in
+            const session = localStorage.getItem('learnai_session');
+            if (session) {
+                loader.style.display = 'none';
+                return;
+            }
+
+            // First visit or logged-out: show animation once
+            const els = loader.querySelectorAll('.loader-logo, .loader-tagline, .loader-bar-wrap, .loader-bar');
+            els.forEach(el => {
+                el.style.animation = 'none';
+                el.offsetHeight;
+                el.style.animation = '';
+            });
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    loader.classList.add('hide');
+                }, 2600);
+            });
+        })();
+    </script>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <h2>LearnAI</h2>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="dashboard.html#/browse-courses" class="nav-link">Browse Courses</a></li>
+                <li><a href="dashboard.html#/my-courses" class="nav-link" id="myCoursesLink" style="display: none;">My Courses</a></li>
+                <li><a href="register.html" class="nav-link" id="registerLink">Register</a></li>
+                <li><a href="login.html" class="nav-link" id="loginLink">Login</a></li>
+            </ul>
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div class="profile-icon" onclick="toggleProfile()">
+                    <img src="assets/default-avatar.png" alt="Profile" id="profileImg">
+                </div>
+                <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMobileNav()" aria-label="Menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Dropdown -->
+    <div class="profile-dropdown" id="profileDropdown">
+        <div class="profile-header">
+            <img src="assets/default-avatar.png" alt="User">
+            <div>
+                <h4>Guest User</h4>
+                <p>guest@learnai.com</p>
+            </div>
+        </div>
+        <ul class="profile-menu">
+            <li><a href="dashboard.html#/"><span class="icon-3d-wrapper icon-sm icon-purple" style="margin-right: 10px;"><i data-lucide="layout-dashboard"></i></span> Dashboard</a></li>
+            <li><a href="dashboard.html#/my-courses"><span class="icon-3d-wrapper icon-sm icon-blue" style="margin-right: 10px;"><i data-lucide="book-open"></i></span> My Courses</a></li>
+            <li><a href="dashboard.html#/browse-courses"><span class="icon-3d-wrapper icon-sm icon-indigo" style="margin-right: 10px;"><i data-lucide="search"></i></span> Browse Courses</a></li>
+            <li><a href="dashboard.html#/profile"><span class="icon-3d-wrapper icon-sm icon-green" style="margin-right: 10px;"><i data-lucide="user"></i></span> My Profile</a></li>
+            <li><a href="dashboard.html#/settings"><span class="icon-3d-wrapper icon-sm icon-orange" style="margin-right: 10px;"><i data-lucide="settings"></i></span> Settings</a></li>
+            <li><a href="#" onclick="logout()"><span class="icon-3d-wrapper icon-sm icon-red" style="margin-right: 10px;"><i data-lucide="log-out"></i></span> Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <!-- Floating Background Elements -->
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+            <div class="shape shape-6"></div>
+            <div class="shape shape-7"></div>
+            <div class="shape shape-8"></div>
+        </div>
+        
+        <!-- Floating Particles -->
+        <div class="particles">
+            <div class="particle particle-1"></div>
+            <div class="particle particle-2"></div>
+            <div class="particle particle-3"></div>
+            <div class="particle particle-4"></div>
+            <div class="particle particle-5"></div>
+            <div class="particle particle-6"></div>
+            <div class="particle particle-7"></div>
+            <div class="particle particle-8"></div>
+            <div class="particle particle-9"></div>
+            <div class="particle particle-10"></div>
+        </div>
+        
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Learn Smarter with <span class="gradient-text">AI-Powered</span> Education
+            </h1>
+            <p class="hero-description">
+                Experience personalized learning that adapts to your pace and style. 
+                Our intelligent platform analyzes your progress and creates a custom learning path just for you.
+            </p>
+            <button class="cta-button" id="ctaButton" onclick="getStarted()">
+                Get Started
+                <span class="arrow">→</span>
+            </button>
+        </div>
+        <div class="hero-visual">
+            <div class="floating-card card-1">
+                <div class="card-icon"><span class="icon-3d-wrapper icon-lg icon-blue"><i data-lucide="book-open"></i></span></div>
+                <p>Adaptive Courses</p>
+            </div>
+            <div class="floating-card card-2">
+                <div class="card-icon"><span class="icon-3d-wrapper icon-lg icon-red"><i data-lucide="target"></i></span></div>
+                <p>Smart Tracking</p>
+            </div>
+            <div class="floating-card card-3">
+                <div class="card-icon"><span class="icon-3d-wrapper icon-lg icon-orange"><i data-lucide="rocket"></i></span></div>
+                <p>Fast Progress</p>
+            </div>
+            <div class="floating-card card-4">
+                <div class="card-icon"><span class="icon-3d-wrapper icon-lg icon-purple"><i data-lucide="lightbulb"></i></span></div>
+                <p>AI Insights</p>
+            </div>
+            <div class="floating-card card-5">
+                <div class="card-icon"><span class="icon-3d-wrapper icon-lg icon-orange"><i data-lucide="trophy"></i></span></div>
+                <p>Achievements</p>
+            </div>
+            <div class="floating-card card-6">
+                <div class="card-icon"><span class="icon-3d-wrapper icon-lg icon-indigo"><i data-lucide="bar-chart-3"></i></span></div>
+                <p>Analytics</p>
+            </div>
+            <div class="floating-card card-7">
+                <div class="card-icon"><span class="icon-3d-wrapper icon-lg icon-blue"><i data-lucide="zap"></i></span></div>
+                <p>Quick Learn</p>
+            </div>
+            <div class="floating-card card-8">
+                <div class="card-icon"><span class="icon-3d-wrapper icon-lg icon-purple"><i data-lucide="graduation-cap"></i></span></div>
+                <p>Certificates</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats">
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number" data-target="0" id="statStudents">0</div>
+                <p class="stat-label">Active Students</p>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="0" id="statCourses">0</div>
+                <p class="stat-label">Courses Available</p>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="0" id="statSuccessRate">0</div>
+                <p class="stat-label">Success Rate %</p>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="0" id="statInstructors">0</div>
+                <p class="stat-label">Expert Instructors</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <h2 class="section-title">Why Choose LearnAI?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><span class="icon-3d-wrapper icon-xl icon-purple"><i data-lucide="bot"></i></span></div>
+                <h3>AI-Driven Learning</h3>
+                <p>Smart algorithms adapt content difficulty based on your performance</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><span class="icon-3d-wrapper icon-xl icon-blue"><i data-lucide="bar-chart-3"></i></span></div>
+                <h3>Progress Analytics</h3>
+                <p>Track your learning journey with detailed insights and reports</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><span class="icon-3d-wrapper icon-xl icon-orange"><i data-lucide="graduation-cap"></i></span></div>
+                <h3>Expert Instructors</h3>
+                <p>Learn from industry professionals and experienced educators</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><span class="icon-3d-wrapper icon-xl icon-indigo"><i data-lucide="zap"></i></span></div>
+                <h3>Interactive Quizzes</h3>
+                <p>Test your knowledge with real-time feedback and explanations</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Courses Section -->
+    <section class="courses">
+        <h2 class="section-title">Featured Courses</h2>
+        <p class="section-subtitle">Start your learning journey with our most popular courses</p>
+        
+        <div class="courses-grid" id="featuredCoursesGrid">
+            <!-- Courses will be loaded dynamically -->
+            <div style="text-align: center; padding: 40px; color: #666; grid-column: 1 / -1;">
+                Loading courses...
+            </div>
+        </div>
+        
+        <div class="view-all-container">
+            <button class="view-all-btn" onclick="viewAllCourses()">View All Courses →</button>
+        </div>
+    </section>
+
+    <!-- AI Features Showcase -->
+    <section class="ai-showcase">
+        <div class="showcase-container">
+            <div class="showcase-content">
+                <h2 class="section-title">Powered by Intelligent AI</h2>
+                <p class="showcase-description">Our adaptive learning engine analyzes your performance in real-time and personalizes your learning experience</p>
+                
+                <div class="ai-features-list">
+                    <div class="ai-feature-item">
+                        <div class="ai-icon"><span class="icon-3d-wrapper icon-md icon-purple"><i data-lucide="brain"></i></span></div>
+                        <div>
+                            <h4>Smart Content Adaptation</h4>
+                            <p>Automatically adjusts difficulty based on your quiz scores and progress</p>
+                        </div>
+                    </div>
+                    <div class="ai-feature-item">
+                        <div class="ai-icon"><span class="icon-3d-wrapper icon-md icon-red"><i data-lucide="target"></i></span></div>
+                        <div>
+                            <h4>Personalized Learning Path</h4>
+                            <p>Creates custom roadmaps tailored to your goals and learning style</p>
+                        </div>
+                    </div>
+                    <div class="ai-feature-item">
+                        <div class="ai-icon"><span class="icon-3d-wrapper icon-md icon-blue"><i data-lucide="bar-chart-3"></i></span></div>
+                        <div>
+                            <h4>Predictive Analytics</h4>
+                            <p>Identifies weak areas before you struggle and suggests targeted practice</p>
+                        </div>
+                    </div>
+                    <div class="ai-feature-item">
+                        <div class="ai-icon"><span class="icon-3d-wrapper icon-md icon-orange"><i data-lucide="lightbulb"></i></span></div>
+                        <div>
+                            <h4>Smart Recommendations</h4>
+                            <p>Suggests next courses and topics based on your interests and career goals</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="showcase-visual">
+                <div class="dashboard-mockup">
+                    <div class="mockup-header">
+                        <span class="mockup-dot"></span>
+                        <span class="mockup-dot"></span>
+                        <span class="mockup-dot"></span>
+                    </div>
+                    <div class="mockup-content">
+                        <div class="progress-bar-demo">
+                            <p>Your Progress</p>
+                            <div class="progress-track">
+                                <div class="progress-fill"></div>
+                            </div>
+                            <span>78% Complete</span>
+                        </div>
+                        <div class="recommendation-demo">
+                            <p><span class="icon-3d-wrapper icon-sm icon-red" style="margin-right: 5px;"><i data-lucide="target"></i></span> Recommended for you</p>
+                            <div class="rec-item">Advanced JavaScript</div>
+                            <div class="rec-item">React Hooks Deep Dive</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <h4>How does the AI adapt to my learning style?</h4>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Our AI analyzes your quiz performance, time spent on topics, and learning patterns. Based on this data, it adjusts content difficulty, recommends relevant materials, and creates a personalized learning path that matches your pace and preferences.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <h4>Can I switch plans anytime?</h4>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes! You can upgrade, downgrade, or cancel your subscription at any time. Changes take effect immediately, and we'll prorate any charges or credits accordingly.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <h4>Do I get certificates after completing courses?</h4>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Pro and Premium members receive verified certificates upon course completion. These certificates can be shared on LinkedIn and added to your resume to showcase your skills.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <h4>Is there a free trial available?</h4>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes! We offer a 14-day free trial for the Pro plan. No credit card required. You'll get full access to all Pro features during the trial period.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <h4>What if I need help during a course?</h4>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>All members have access to our community forum. Pro members get email support within 24 hours, while Premium members enjoy priority 24/7 support and 1-on-1 mentorship sessions.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <h4>Can I access courses on mobile devices?</h4>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Absolutely! Our platform is fully responsive and works seamlessly on all devices - desktop, tablet, and mobile. Learn anytime, anywhere at your convenience.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Activity Feed -->
+    <section class="activity-feed">
+        <h2 class="section-title">Live Activity</h2>
+        <p class="section-subtitle">See what our community is achieving right now</p>
+        
+        <div class="activity-container">
+            <div class="activity-item">
+                <div class="activity-avatar"><span class="icon-3d-wrapper icon-md icon-blue"><i data-lucide="user"></i></span></div>
+                <div class="activity-content">
+                    <p><strong>Alex M.</strong> just completed <span class="highlight">Python Basics</span></p>
+                    <span class="activity-time">2 minutes ago</span>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-avatar"><span class="icon-3d-wrapper icon-md icon-purple"><i data-lucide="user"></i></span></div>
+                <div class="activity-content">
+                    <p><strong>Sarah K.</strong> earned a certificate in <span class="highlight">Web Development</span></p>
+                    <span class="activity-time">5 minutes ago</span>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-avatar"><span class="icon-3d-wrapper icon-md icon-indigo"><i data-lucide="user"></i></span></div>
+                <div class="activity-content">
+                    <p><strong>John D.</strong> started learning <span class="highlight">Machine Learning</span></p>
+                    <span class="activity-time">8 minutes ago</span>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-avatar"><span class="icon-3d-wrapper icon-md icon-orange"><i data-lucide="user"></i></span></div>
+                <div class="activity-content">
+                    <p><strong>Emma R.</strong> achieved 100% in <span class="highlight">JavaScript Quiz</span></p>
+                    <span class="activity-time">12 minutes ago</span>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-avatar"><span class="icon-3d-wrapper icon-md icon-green"><i data-lucide="user"></i></span></div>
+                <div class="activity-content">
+                    <p><strong>Mike T.</strong> unlocked <span class="highlight">Advanced React</span> course</p>
+                    <span class="activity-time">15 minutes ago</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team" id="about">
+        <h2 class="section-title">Meet Our Team</h2>
+        <p class="team-subtitle">Four passionate students building the future of education</p>
+        
+        <div class="team-slider">
+            <button class="slider-btn prev" onclick="slideTeam(-1)">‹</button>
+            
+            <div class="team-container">
+                <div class="team-member active">
+                    <div class="member-image">
+                        <img src="images/Punit.jpeg" alt="Punit Dhamale">
+                    </div>
+                    <h3>Punit Dhamale</h3>
+                    <p class="member-role">Full Stack Developer</p>
+                    <p class="member-bio">Passionate about creating seamless user experiences and building scalable applications.</p>
+                    <div class="member-skills">
+                        <span>React</span>
+                        <span>Node.js</span>
+                        <span>MySQL</span>
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="images/Suyog.jpeg" alt="Suyog Dudhade">
+                    </div>
+                    <h3>Suyog Dudhade</h3>
+                    <p class="member-role">Frontend Developer</p>
+                    <p class="member-bio">Specializes in crafting beautiful interfaces and smooth animations that users love.</p>
+                    <div class="member-skills">
+                        <span>HTML/CSS</span>
+                        <span>JavaScript</span>
+                        <span>Bootstrap</span>
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="images/Atharv.jpeg" alt="Atharv Gaikwad">
+                    </div>
+                    <h3>Atharv Gaikwad</h3>
+                    <p class="member-role">Backend Developer</p>
+                    <p class="member-bio">Expert in server-side logic, database design, and API development.</p>
+                    <div class="member-skills">
+                        <span>Express.js</span>
+                        <span>MySQL</span>
+                        <span>REST API</span>
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="images/Aditya.jpeg" alt="Aditya Gaikwad">
+                    </div>
+                    <h3>Aditya Gaikwad</h3>
+                    <p class="member-role">AI/ML Specialist</p>
+                    <p class="member-bio">Focused on implementing adaptive learning algorithms and data analysis.</p>
+                    <div class="member-skills">
+                        <span>Algorithms</span>
+                        <span>Data Analysis</span>
+                        <span>AI Logic</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="slider-btn next" onclick="slideTeam(1)">›</button>
+        </div>
+        
+        <div class="slider-dots">
+            <span class="dot active" onclick="currentSlide(0)"></span>
+            <span class="dot" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+            <span class="dot" onclick="currentSlide(3)"></span>
+        </div> 
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>LearnAI</h3>
+                <p>Empowering learners with intelligent, adaptive education technology.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="dashboard.html#/browse-courses">Courses</a></li>
+                    <li><a href="#about">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>Email: info@learnai.com</p>
+                <p>Phone: +1 234 567 8900</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 LearnAI. Built by passionate students.</p>
+            <p style="margin-top: 10px; font-size: 13px;">
+                <a href="admin-login.html" style="color: #9ca3af; text-decoration: none;">Admin Access</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="scripts/main.js"></script>
+    <script>
+        // Initialize Lucide icons
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+        // Close mobile nav when clicking outside
+        document.addEventListener('click', function(e) {
+            const nav = document.getElementById('navLinks');
+            const btn = document.getElementById('hamburgerBtn');
+            if (nav && nav.classList.contains('mobile-open')) {
+                if (!nav.contains(e.target) && !btn.contains(e.target)) {
+                    nav.classList.remove('mobile-open');
+                    btn.classList.remove('open');
+                }
+            }
+        });
+    </script>
+    
+    <!-- AI Chatbot Widget -->
+    <link rel="stylesheet" href="styles/chatbot.css">
+    <script src="scripts/chatbot.js"></script>
+</body>
+</html>

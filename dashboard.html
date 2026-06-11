@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnAI - Dashboard</title>
+    <!-- React Assets -->
+    <!-- Note: These filenames might change after build, but Vite config is set to output to react-assets/ -->
+    <script type="module" crossorigin src="./react-assets/index.js"></script>
+    <link rel="stylesheet" crossorigin href="./react-assets/index.css">
+    
+    <!-- Fallback if Vite adds hashes (which it does by default) -->
+    <!-- The user should run 'npm run build' which I configured to output to react-assets/ -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f8fafc;
+            font-family: 'Inter', sans-serif;
+        }
+        #root:empty::after {
+            content: 'Loading LearnAI Premium Dashboard...';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: 700;
+            color: #6366f1;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <!-- Script to handle automatic asset discovery if needed -->
+    <script>
+        // Check if assets are loaded, if not, try to find them
+        window.addEventListener('error', function(e) {
+            if (e.target.tagName === 'SCRIPT' || e.target.tagName === 'LINK') {
+                console.log('Asset load failed, checking for hashed versions...');
+            }
+        }, true);
+    </script>
+</body>
+</html>

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - LearnAI</title>
+    <link rel="stylesheet" href="styles/dashboard.css">
+    <link rel="stylesheet" href="styles/admin.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="scripts/config.js"></script><script src="scripts/api.js"></script></head>
+<body>
+<div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2><span class="icon-3d-wrapper icon-sm icon-indigo" style="margin-right:8px;"><i data-lucide="graduation-cap"></i></span>LearnAI</h2>
+            <p style="font-size:12px;color:#9ca3af;margin:4px 0 0;">Admin Panel</p>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" onclick="showSection('dashboard',this)">
+                <span class="nav-icon"><span class="icon-3d-wrapper icon-xs icon-blue"><i data-lucide="layout-dashboard"></i></span></span><span class="nav-text">Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('courses',this)">
+                <span class="nav-icon"><span class="icon-3d-wrapper icon-xs icon-orange"><i data-lucide="book-open"></i></span></span><span class="nav-text">Courses</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('users',this)">
+                <span class="nav-icon"><span class="icon-3d-wrapper icon-xs icon-green"><i data-lucide="users"></i></span></span><span class="nav-text">Users</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('reviews',this)">
+                <span class="nav-icon"><span class="icon-3d-wrapper icon-xs icon-purple"><i data-lucide="star"></i></span></span><span class="nav-text">Reviews</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('testseries',this)">
+                <span class="nav-icon"><span class="icon-3d-wrapper icon-xs icon-orange"><i data-lucide="clipboard-list"></i></span></span><span class="nav-text">Test Series</span>
+            </a>
+            <div class="nav-divider"></div>
+            <a href="index.html" class="nav-item">
+                <span class="nav-icon"><span class="icon-3d-wrapper icon-xs icon-indigo"><i data-lucide="globe"></i></span></span><span class="nav-text">View Platform</span>
+            </a>
+            <a href="#" class="nav-item" onclick="logout()">
+                <span class="nav-icon"><span class="icon-3d-wrapper icon-xs icon-red"><i data-lucide="log-out"></i></span></span><span class="nav-text">Logout</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="adminMenuToggle" onclick="toggleSidebar()" style="background:none;border:none;cursor:pointer;padding:8px;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:background 0.2s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'"><i data-lucide="menu"></i></button>
+                <h1 id="pageTitle">Admin Dashboard</h1>
+            </div>
+            <div class="topbar-right">
+                <span id="adminName" style="font-weight:600;color:#374151;margin-right:12px;">Admin</span>
+                <div style="width:38px;height:38px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;">A</div>
+            </div>
+        </header>
+
+        <!-- ── Dashboard ── -->
+        <section id="dashboardSection" class="admin-section active">
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-icon"><span class="icon-3d-wrapper icon-md icon-blue"><i data-lucide="users"></i></span></div><div class="stat-info"><h3 id="totalUsers">—</h3><p>Total Users</p></div></div>
+                <div class="stat-card"><div class="stat-icon"><span class="icon-3d-wrapper icon-md icon-orange"><i data-lucide="book"></i></span></div><div class="stat-info"><h3 id="totalCourses">—</h3><p>Total Courses</p></div></div>
+                <div class="stat-card"><div class="stat-icon"><span class="icon-3d-wrapper icon-md icon-green"><i data-lucide="check-circle"></i></span></div><div class="stat-info"><h3 id="totalEnrollments">—</h3><p>Enrollments</p></div></div>
+                <div class="stat-card"><div class="stat-icon"><span class="icon-3d-wrapper icon-md icon-purple"><i data-lucide="star"></i></span></div><div class="stat-info"><h3 id="totalReviews">—</h3><p>Reviews</p></div></div>
+                <div class="stat-card"><div class="stat-icon"><span class="icon-3d-wrapper icon-md icon-orange"><i data-lucide="clipboard-list"></i></span></div><div class="stat-info"><h3 id="totalTests">—</h3><p>Test Series</p></div></div>
+            </div>
+            <div class="dashboard-grid">
+                <div class="dashboard-card"><h3>Recent Users</h3><div id="recentUsers" class="list-container"></div></div>
+                <div class="dashboard-card"><h3>Popular Courses</h3><div id="popularCourses" class="list-container"></div></div>
+            </div>
+        </section>
+
+        <!-- ── Courses ── -->
+        <section id="coursesSection" class="admin-section">
+            <div class="section-header">
+                <h2>Course Management</h2>
+                <div class="section-actions">
+                    <input type="text" id="courseSearch" placeholder="Search courses…" class="search-input" oninput="filterCourses(this.value)">
+                    <button class="btn-primary" onclick="openCourseBuilder()">+ New Course</button>
+                </div>
+            </div>
+            <div class="courses-grid" id="coursesGrid"></div>
+        </section>
+
+        <!-- ── Users ── -->
+        <section id="usersSection" class="admin-section">
+            <div class="section-header">
+                <h2>User Management</h2>
+                <div class="section-actions">
+                    <input type="text" id="userSearch" placeholder="Search users…" class="search-input">
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Joined</th><th>Courses</th><th>Actions</th></tr></thead>
+                    <tbody id="usersTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ── Reviews ── -->
+        <section id="reviewsSection" class="admin-section">
+            <div class="section-header"><h2>Reviews Management</h2></div>
+            <div id="adminReviewsList"></div>
+        </section>
+
+        <!-- ── Test Series ── -->
+        <section id="testseriesSection" class="admin-section">
+            <div class="section-header">
+                <h2>Test Series Management</h2>
+                <button class="btn-primary" onclick="openCreateTestSeries()">+ New Test Series</button>
+            </div>
+            <div id="testSeriesList" class="test-series-admin-list"></div>
+        </section>
+    </main>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     COURSE BUILDER MODAL
+══════════════════════════════════════════════════════════ -->
+<div id="courseBuilderModal" class="modal">
+<div class="modal-content modal-xl">
+    <div class="modal-header">
+        <h3 id="builderTitle">Create New Course</h3>
+        <button class="modal-close" onclick="closeModal('courseBuilderModal')">&times;</button>
+    </div>
+
+    <!-- Step tabs -->
+    <div class="builder-steps">
+        <div class="builder-step active" id="step1Tab" onclick="goToStep(1)">
+            <span class="step-num">1</span> Course Info
+        </div>
+        <div class="builder-step" id="step2Tab" onclick="goToStep(2)">
+            <span class="step-num">2</span> Sections & Lessons
+        </div>
+        <div class="builder-step" id="step3Tab" onclick="goToStep(3)">
+            <span class="step-num">3</span> Review & Publish
+        </div>
+    </div>
+
+    <!-- Step 1: Course Info -->
+    <div id="builderStep1" class="builder-step-content active">
+        <div class="form-row">
+            <div class="form-group" style="flex:2">
+                <label>Course Title *</label>
+                <input type="text" id="bTitle" placeholder="e.g. Complete Python Bootcamp" required>
+            </div>
+            <div class="form-group">
+                <label>Difficulty *</label>
+                <select id="bDifficulty">
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Advanced">Advanced</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Description *</label>
+            <textarea id="bDescription" rows="4" placeholder="What will students learn?"></textarea>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Instructor Name *</label>
+                <input type="text" id="bInstructor" placeholder="e.g. Dr. John Smith">
+            </div>
+            <div class="form-group">
+                <label>Price (₹) *</label>
+                <input type="number" id="bPrice" placeholder="0 for free" min="0" value="0">
+            </div>
+            <div class="form-group">
+                <label>Duration (hours)</label>
+                <input type="number" id="bDuration" placeholder="e.g. 20" min="1" value="10">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Course Category / Tags</label>
+            <input type="text" id="bTags" placeholder="e.g. Python, Data Science, AI">
+        </div>
+        <div class="builder-nav">
+            <span></span>
+            <button class="btn-primary" onclick="goToStep(2)">Next: Add Lessons →</button>
+        </div>
+    </div>
+
+    <!-- Step 2: Sections & Lessons -->
+    <div id="builderStep2" class="builder-step-content">
+        <div class="sections-builder">
+            <div class="sections-list" id="sectionsList"></div>
+            <button class="btn-add-section" onclick="addSection()">+ Add Section</button>
+        </div>
+        <div class="builder-nav">
+            <button class="btn-secondary" onclick="goToStep(1)">← Back</button>
+            <button class="btn-primary" onclick="goToStep(3)">Next: Review →</button>
+        </div>
+    </div>
+
+    <!-- Step 3: Review & Publish -->
+    <div id="builderStep3" class="builder-step-content">
+        <div id="reviewSummary" class="review-summary"></div>
+        <div class="builder-nav">
+            <button class="btn-secondary" onclick="goToStep(2)">← Back</button>
+            <button class="btn-primary btn-publish" id="publishBtn" onclick="publishCourse()"><i data-lucide="rocket" style="margin-right:8px;"></i> Publish Course</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     LESSON EDITOR MODAL
+══════════════════════════════════════════════════════════ -->
+<div id="lessonModal" class="modal">
+<div class="modal-content modal-lg">
+    <div class="modal-header">
+        <h3 id="lessonModalTitle">Add Lesson</h3>
+        <button class="modal-close" onclick="closeModal('lessonModal')">&times;</button>
+    </div>
+    <div class="modal-form">
+        <input type="hidden" id="lSectionIdx">
+        <input type="hidden" id="lLessonIdx">
+        <div class="form-row">
+            <div class="form-group" style="flex:2">
+                <label>Lesson Title *</label>
+                <input type="text" id="lTitle" placeholder="e.g. Introduction to Variables">
+            </div>
+            <div class="form-group">
+                <label>Type *</label>
+                <select id="lType" onchange="updateLessonTypeFields()">
+                    <option value="video">Video</option>
+                    <option value="article">Article</option>
+                    <option value="quiz">Quiz</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Duration (min)</label>
+                <input type="number" id="lDuration" value="10" min="1">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            <input type="text" id="lDescription" placeholder="Brief lesson description">
+        </div>
+
+        <!-- Video fields -->
+        <div id="videoFields">
+            <div class="form-group">
+                <label>YouTube Video URL</label>
+                <input type="text" id="lVideoUrl" placeholder="https://www.youtube.com/watch?v=... or embed URL">
+                <small style="color:#6b7280">Paste any YouTube URL — it will be converted automatically</small>
+            </div>
+        </div>
+
+        <!-- Article fields -->
+        <div id="articleFields" style="display:none">
+            <div class="form-group">
+                <label>Article Content (HTML supported)</label>
+                <textarea id="lArticleContent" rows="8" placeholder="<h2>Introduction</h2><p>Content here...</p>"></textarea>
+            </div>
+        </div>
+
+        <!-- Quiz fields -->
+        <div id="quizFields" style="display:none">
+            <div class="quiz-questions-builder" id="quizQuestionsBuilder"></div>
+            <button class="btn-add-section" onclick="addQuizQuestion()">+ Add Question</button>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('lessonModal')">Cancel</button>
+            <button class="btn-primary" onclick="saveLesson()">Save Lesson</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Edit existing course modal (simple) -->
+<div id="manageCourseModal" class="modal">
+<div class="modal-content modal-xl">
+    <div class="modal-header">
+        <h3>Manage Course: <span id="manageCourseName"></span></h3>
+        <button class="modal-close" onclick="closeModal('manageCourseModal')">&times;</button>
+    </div>
+    <input type="hidden" id="manageCourseId">
+    <div class="modal-form">
+        <div class="manage-add-section-row">
+            <input type="text" id="newSectionTitle" placeholder="New section title e.g. Module 2: Advanced Topics" class="manage-section-input">
+            <button class="btn-primary" onclick="addSectionToExistingCourse()">+ Add Section</button>
+        </div>
+        <div id="manageCurriculumList" class="manage-curriculum-list"></div>
+    </div>
+</div>
+</div>
+
+<div id="manageLessonModal" class="modal">
+<div class="modal-content modal-lg">
+    <div class="modal-header">
+        <h3 id="manageLessonModalTitle">Add Lesson</h3>
+        <button class="modal-close" onclick="closeModal('manageLessonModal')">&times;</button>
+    </div>
+    <div class="modal-form">
+        <div class="form-row">
+            <div class="form-group" style="flex:2">
+                <label>Lesson Title *</label>
+                <input type="text" id="mlTitle" placeholder="e.g. Advanced React Hooks">
+            </div>
+            <div class="form-group">
+                <label>Type *</label>
+                <select id="mlType" onchange="updateManageLessonFields()">
+                    <option value="video">Video</option>
+                    <option value="article">Article</option>
+                    <option value="quiz">Quiz</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Duration (min)</label>
+                <input type="number" id="mlDuration" value="10" min="1">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            <input type="text" id="mlDescription" placeholder="Brief lesson description">
+        </div>
+        <div id="mlVideoFields">
+            <div class="form-group">
+                <label>YouTube Video URL</label>
+                <input type="text" id="mlVideoUrl" placeholder="https://www.youtube.com/watch?v=...">
+                <small style="color:#6b7280">Any YouTube URL — auto-converted to embed</small>
+            </div>
+        </div>
+        <div id="mlArticleFields" style="display:none">
+            <div class="form-group">
+                <label>Article Content (HTML supported)</label>
+                <textarea id="mlArticleContent" rows="8" placeholder="<h2>Topic</h2><p>Content...</p>"></textarea>
+            </div>
+        </div>
+        <div id="mlQuizFields" style="display:none">
+            <div class="quiz-questions-builder" id="mlQuizQuestionsBuilder"></div>
+            <button class="btn-add-section" onclick="addManageQuizQuestion()">+ Add Question</button>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('manageLessonModal')">Cancel</button>
+            <button class="btn-primary" onclick="saveManageLesson()">Save &amp; Publish Live</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<div id="editCourseModal" class="modal"><div class="modal-content">
+    <div class="modal-header">
+        <h3>Edit Course</h3>
+        <button class="modal-close" onclick="closeModal('editCourseModal')">&times;</button>
+    </div>
+    <div class="modal-form">
+        <input type="hidden" id="editCourseId">
+        <div class="form-group"><label>Title</label><input type="text" id="editCourseTitle"></div>
+        <div class="form-group"><label>Description</label><textarea id="editCourseDesc" rows="3"></textarea></div>
+        <div class="form-row">
+            <div class="form-group"><label>Instructor</label><input type="text" id="editCourseInstructor"></div>
+            <div class="form-group"><label>Price (₹)</label><input type="number" id="editCoursePrice"></div>
+            <div class="form-group"><label>Difficulty</label>
+                <select id="editCourseDifficulty">
+                    <option>Beginner</option><option>Intermediate</option><option>Advanced</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('editCourseModal')">Cancel</button>
+            <button class="btn-primary" onclick="saveEditCourse()">Save Changes</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- ══ TEST SERIES CREATE/EDIT MODAL ══ -->
+<div id="testSeriesModal" class="modal">
+<div class="modal-content modal-xl">
+    <div class="modal-header">
+        <h3 id="testSeriesModalTitle">Create Test Series</h3>
+        <button class="modal-close" onclick="closeModal('testSeriesModal')">&times;</button>
+    </div>
+    <div class="modal-form">
+        <input type="hidden" id="tsEditId">
+        <div class="ts-builder-tabs">
+            <button class="ts-tab active" id="tsTab1" onclick="switchTsTab(1)">1. Details</button>
+            <button class="ts-tab" id="tsTab2" onclick="switchTsTab(2)">2. Questions</button>
+        </div>
+
+        <!-- Tab 1: Details -->
+        <div id="tsTabContent1" class="ts-tab-content active">
+            <div class="form-row">
+                <div class="form-group" style="flex:2">
+                    <label>Test Title *</label>
+                    <input type="text" id="tsTitle" placeholder="e.g. Python Fundamentals Test">
+                </div>
+                <div class="form-group">
+                    <label>Duration (minutes) *</label>
+                    <input type="number" id="tsDuration" value="30" min="5">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="tsDescription" rows="3" placeholder="What topics does this test cover?"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Start Date &amp; Time *</label>
+                <input type="datetime-local" id="tsStartDatetime">
+                <small style="color:#6b7280">Students will be notified and can only take the test at this time</small>
+            </div>
+            <div class="builder-nav" style="margin-top:20px;">
+                <span></span>
+                <button class="btn-primary" onclick="switchTsTab(2)">Next: Add Questions →</button>
+            </div>
+        </div>
+
+        <!-- Tab 2: Questions -->
+        <div id="tsTabContent2" class="ts-tab-content">
+            <div id="tsQuestionsBuilder" class="quiz-questions-builder"></div>
+            <button class="btn-add-section" onclick="addTsQuestion()">+ Add Question</button>
+            <div class="builder-nav" style="margin-top:20px;">
+                <button class="btn-secondary" onclick="switchTsTab(1)">← Back</button>
+                <button class="btn-primary" onclick="saveTestSeries()">💾 Save Test Series</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- ══ TEST SERIES LEADERBOARD MODAL ══ -->
+<div id="tsLeaderboardModal" class="modal">
+<div class="modal-content modal-lg">
+    <div class="modal-header">
+        <h3 id="tsLeaderboardTitle">Leaderboard</h3>
+        <button class="modal-close" onclick="closeModal('tsLeaderboardModal')">&times;</button>
+    </div>
+    <div id="tsLeaderboardContent" style="padding:20px;"></div>
+</div>
+</div>
+
+<script src="scripts/admin.js"></script>
+</body>
+</html>
