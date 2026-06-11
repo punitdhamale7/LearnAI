@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setInterval(function() {
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'http://localhost:3001/api/courses/' + currentCourseId + '/curriculum');
+        xhr.open('GET', 'https://learnai-backend-yf50.onrender.com/api/courses/' + currentCourseId + '/curriculum');
         xhr.onload = function() {
             try {
                 var data = JSON.parse(xhr.responseText);
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function loadCourse() {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'http://localhost:3001/api/courses/' + currentCourseId);
+    xhr.open('GET', 'https://learnai-backend-yf50.onrender.com/api/courses/' + currentCourseId);
     xhr.onload = function() {
         try {
             var data = JSON.parse(xhr.responseText);
@@ -104,7 +104,7 @@ function loadCourse() {
 
 function loadCurriculum() {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'http://localhost:3001/api/courses/' + currentCourseId + '/curriculum');
+    xhr.open('GET', 'https://learnai-backend-yf50.onrender.com/api/courses/' + currentCourseId + '/curriculum');
     xhr.onload = function() {
         try {
             var data = JSON.parse(xhr.responseText);
@@ -217,7 +217,7 @@ function loadLesson(lessonId) {
     
     
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'http://localhost:3001/api/lessons/' + lessonId + '/progress/' + userId);
+    xhr.open('GET', 'https://learnai-backend-yf50.onrender.com/api/lessons/' + lessonId + '/progress/' + userId);
     xhr.onload = function() {
         try {
             var data = JSON.parse(xhr.responseText);
@@ -348,7 +348,7 @@ example();</code></pre>
 
 function loadCourseProgress() {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'http://localhost:3001/api/courses/' + currentCourseId + '/progress/' + userId);
+    xhr.open('GET', 'https://learnai-backend-yf50.onrender.com/api/courses/' + currentCourseId + '/progress/' + userId);
     xhr.onload = function() {
         try {
             var data = JSON.parse(xhr.responseText);
@@ -373,7 +373,7 @@ function loadCourseProgress() {
                         btn.textContent = '⏳ Generating...';
                         btn.disabled = true;
                         var a = document.createElement('a');
-                        a.href = 'http://localhost:3001/api/certificates/generate/' + userId + '/' + currentCourseId;
+                        a.href = 'https://learnai-backend-yf50.onrender.com/api/certificates/generate/' + userId + '/' + currentCourseId;
                         a.download = 'Certificate.pdf';
                         a.target = '_blank';
                         document.body.appendChild(a);
@@ -404,7 +404,7 @@ function updateLessonStatuses() {
 function markAsComplete() {
     if (!currentLessonId) return;
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'http://localhost:3001/api/lessons/' + currentLessonId + '/complete');
+    xhr.open('POST', 'https://learnai-backend-yf50.onrender.com/api/lessons/' + currentLessonId + '/complete');
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.onload = function() {
         try {
@@ -480,7 +480,7 @@ function loadQuiz(lessonId) {
     var container = document.getElementById('quizContainer');
     container.innerHTML = '<div style="text-align:center;padding:30px;color:#9ca3af;">Loading quiz…</div>';
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'http://localhost:3001/api/lessons/' + lessonId + '/quiz');
+    xhr.open('GET', 'https://learnai-backend-yf50.onrender.com/api/lessons/' + lessonId + '/quiz');
     xhr.onload = function() {
         try {
             var data = JSON.parse(xhr.responseText);
@@ -548,7 +548,7 @@ function submitQuiz(questions) {
         if (selected) answers[q.id] = selected.value;
     });
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'http://localhost:3001/api/lessons/' + currentLessonId + '/quiz/submit');
+    xhr.open('POST', 'https://learnai-backend-yf50.onrender.com/api/lessons/' + currentLessonId + '/quiz/submit');
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.onload = function() {
         try {
@@ -743,7 +743,7 @@ function highlightStars(rating) {
 function loadReviews() {
     if (!currentCourseId) return;
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'http://localhost:3001/api/courses/' + currentCourseId + '/reviews');
+    xhr.open('GET', 'https://learnai-backend-yf50.onrender.com/api/courses/' + currentCourseId + '/reviews');
     xhr.onload = function() {
         try {
             var data = JSON.parse(xhr.responseText);
@@ -755,7 +755,7 @@ function loadReviews() {
     var session = JSON.parse(localStorage.getItem('session'));
     if (session && session.user) {
         var xhr2 = new XMLHttpRequest();
-        xhr2.open('GET', 'http://localhost:3001/api/courses/' + currentCourseId + '/reviews/user/' + session.user.id);
+        xhr2.open('GET', 'https://learnai-backend-yf50.onrender.com/api/courses/' + currentCourseId + '/reviews/user/' + session.user.id);
         xhr2.onload = function() {
             try {
                 var data = JSON.parse(xhr2.responseText);
@@ -834,7 +834,7 @@ function submitReview() {
     submitBtn.disabled = true;
     submitBtn.textContent = 'Submitting...';
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'http://localhost:3001/api/courses/' + currentCourseId + '/reviews');
+    xhr.open('POST', 'https://learnai-backend-yf50.onrender.com/api/courses/' + currentCourseId + '/reviews');
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.onload = function() {
         try {

@@ -1,5 +1,5 @@
 (function () {
-    const API_BASE_URL = window.LEARNAI_API_URL || 'http://localhost:3001/api/';
+    const API_BASE_URL = window.LEARNAI_API_URL || 'https://learnai-backend-yf50.onrender.com/api/';
     const TOKEN_KEY = 'learnai_tokens';
     const SESSION_KEY = 'learnai_session';
 

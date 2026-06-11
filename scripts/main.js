@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Fetch and display real statistics from database
 async function loadRealStatistics() {
     try {
-        const response = await fetch('http://localhost:3001/api/statistics');
+        const response = await fetch('https://learnai-backend-yf50.onrender.com/api/statistics');
         const data = await response.json();
         
         if (data.success) {
@@ -416,7 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         
         if (currentUser && currentUser.id) {
-            fetch(`http://localhost:3001/api/profile/${currentUser.id}`)
+            fetch(`https://learnai-backend-yf50.onrender.com/api/profile/${currentUser.id}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success && data.profile.avatar_url) {
@@ -448,7 +448,7 @@ function loadFeaturedCourses() {
     
     if (!grid) return;
     
-    fetch('http://localhost:3001/api/courses')
+    fetch('https://learnai-backend-yf50.onrender.com/api/courses')
         .then(response => response.json())
         .then(data => {
             if (data.success && data.courses.length > 0) {

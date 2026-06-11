@@ -226,7 +226,7 @@ function handleRegister(event) {
         };
         
         // Send to backend API
-        fetch('http://localhost:3001/api/auth/register', {
+        fetch('https://learnai-backend-yf50.onrender.com/api/auth/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -355,7 +355,7 @@ class Chatbot {
         this.conversationHistory.push({ role: 'user', content: message });
 
         try {
-            const res = await fetch('http://localhost:3001/api/chatbot/chat', {
+            const res = await fetch('https://learnai-backend-yf50.onrender.com/api/chatbot/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

@@ -1,4 +1,4 @@
-const API = 'http://localhost:3001/api';
+const API = 'https://learnai-backend-yf50.onrender.com/api';
 
 document.addEventListener('DOMContentLoaded', () => {
     const s = JSON.parse(localStorage.getItem('adminSession'));
